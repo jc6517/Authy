@@ -1,0 +1,83 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>ArcGIS JavaScript Cities Map </title>
+  <style>
+    html, body, #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+  
+    <link rel="stylesheet" href="https://js.arcgis.com/4.16/esri/themes/dark/main.css">
+  <script src="https://js.arcgis.com/4.16/"></script>
+  
+  <script>  
+    require([
+        "esri/Map",
+        "esri/layers/FeatureLayer",
+        "esri/views/MapView",
+        "esri/renderers/SimpleRenderer"
+      ], function (Map, FeatureLayer, MapView, SimpleRenderer) {
+      
+      var template = {
+          title: "{REF_AREA_Reference_area}",
+          content: "{REF_AREA_Reference_area} had a real residential price growth of {OBS_VALUE_Observation_Value}% in 2019-Q4 (Year-on-year growth)"
+        };
+      
+            var renderer = {
+          type: "simple",
+          symbol: {
+            type: "simple-marker",
+            color: "#601B82",
+            outline: {
+              color: "white"
+            }
+          },
+          visualVariables: [
+            {
+              type: "size",
+              field: "OBS_VALUE_Observation_Value"
+                }
+              ]};
+      
+      var BISLayer1 = new FeatureLayer({
+        url: 'https://services5.arcgis.com/thMCu750QYO7n6s7/ArcGIS/rest/services/BIS_real_indices_Sub1/FeatureServer/0?',
+        popupTemplate: template,
+        renderer: renderer, //optional
+        outFields: '*',
+        definitionExpression: "TIME_PERIOD_Time_period_or_rang = '2019-Q4'"
+      });
+      
+      var BISLayer2 = new FeatureLayer({
+        url: 'https://services5.arcgis.com/thMCu750QYO7n6s7/ArcGIS/rest/services/BIS_real_indices_Sub_2/FeatureServer/0?',
+        popupTemplate: template,
+        renderer: renderer, //optional
+        outFields: '*',
+        definitionExpression: "TIME_PERIOD_Time_period_or_rang = '2019-Q4'"
+      });
+        
+        
+
+      var map = new Map({
+          basemap: "dark-gray-vector",
+          layers: [BISLayer1, BISLayer2]
+        });   
+
+
+      const view = new MapView({
+          container: "viewDiv",
+          center: [-0.127758, 51.507351],
+          zoom: 2,
+          map: map
+        });
+      });
+
+  </script>
+</head>
+<body>
+  <div id="viewDiv"></div>
+</body>
